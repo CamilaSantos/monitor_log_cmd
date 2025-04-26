@@ -1,0 +1,117 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib64/
+lib/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.whl
+*.pth
+*.venv
+.conda
+env/
+conda-env/
+pyenv-win/
+Poetry.lock
+_build/
+site-packages/
+
+# Installer logs
+*.install.log
+install.log
+
+# PyInstaller related
+*.manifest
+*.spec
+
+# Jupyter Notebook related
+.ipynb_checkpoints
+
+# Django related
+*.log
+*.pot
+*.pyc
+__pycache__/
+.django
+*.sqlite3
+*.sqlitedb
+media/
+static/
+staticfiles/
+
+# Sphinx documentation
+_build/
+htmlcov/
+doctrees/
+*.doctest
+build
+sphinx/
+
+# PyBuilder
+target/
+
+# Erlang related
+erl_crash.dump
+_build/
+.rebar
+
+# RoboFramework related
+output/
+*.robotcache
+
+# PyScaffold related
+boilerplate.egg-info/
+_static/
+_templates/
+
+# mypy
+.mypy_cache/
+dmypy.sock
+dmypy.pid
+
+# Cython
+*.c
+*.so
+*.o
+
+# Sensitive data
+*.key
+*.pem
+*.crt
+
+# OS or Editor related
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*.swo
+.viminfo
+*.пыc
+
+# Poetry
+poetry.lock
+
+# pdm
+pdm.lock
+
+# ...Outros padrões ignorados...
+monitora_tela_console.py
