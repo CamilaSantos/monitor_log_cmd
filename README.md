@@ -7,7 +7,7 @@
 
 > Aplicativo criado para captura de dados de log em tempo real executado através do prompt de comando
 
-## Visão Geral
+## Visão Geral do projeto
 
 A criação deste aplicativo surgiu na necessidade de monitorar uma determindata tarefa de um serviço e validar se está sendo executado dentro do tempo programado. O serviço pode ser executado via prompt de comando e ser visualizada todas as tarefas que estão sendo realizadas. Com o aplicativo é possível capturar palavra ou frase de até 80 caracteres e obter a linha em que esta CHAVE (palavra ou frase) aparece. 
 
