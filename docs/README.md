@@ -8,8 +8,8 @@
 > Aplicativo criado para captura de dados de log em tempo real executado através do prompt de comando
 
 
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
-[![Contributing](https://img.shields.io/badge/Contributing-Yes-brightgreen.svg)](CONTRIBUTING.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)]([CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md))
+[![Contributing](https://img.shields.io/badge/Contributing-Yes-brightgreen.svg)]([CONTRIBUTING.md](CONTRIBUTING.md))
 
 ## Visão Geral do projeto
 
@@ -89,10 +89,10 @@ Após a geração, você pode simplesmente executar o arquivo executável (local
 
 ## Tela da aplicação
 Tela 1: Entrada de dados
-![alt text](image.png)
+![Tela inicial](images/image.png)
 
 Tela 2: Executa prompt de comando, visualização do executável informado
-![alt text](image-1.png)
+![Tela de retornode dados](images/image-1.png)
 
 
 **Observação:** A primeira vez que você executa o aplicativo gerado pelo PyInstaller, ele pode levar um pouco mais de tempo para iniciar, pois precisa extrair os arquivos necessários para uma pasta temporária. As execuções subsequentes geralmente são mais rápidas.
@@ -100,11 +100,11 @@ Tela 2: Executa prompt de comando, visualização do executável informado
 
 ## Contribuição
 
-Quer contribuir? Dê uma olhada no nosso [Guia de Contribuição](CONTRIBUTING.md) para começar!
+Quer contribuir? Dê uma olhada no nosso [Guia de Contribuição](docs/CODE_OF_CONDUCT.md) para começar!
 
 ## Código de Conduta
 
-Nosso compromisso com um ambiente aberto e acolhedor é detalhado no nosso [Código de Conduta](CODE_OF_CONDUCT.md).
+Nosso compromisso com um ambiente aberto e acolhedor é detalhado no nosso [Código de Conduta](docs/CONTRIBUTING.md).
 
 ## Autores
 
