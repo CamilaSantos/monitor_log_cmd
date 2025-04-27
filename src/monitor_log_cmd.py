@@ -293,33 +293,70 @@ class MonitorApp:
 
     def calcular_intervalo_medio(self):
         if len(self.tempos_execucao) > 1:
-            total_intervalo = sum(item[2] for item in self.tempos_execucao[1:])
-            media_segundos = total_intervalo / (len(self.tempos_execucao) - 1)
-            intervalo_str = str(datetime.timedelta(seconds=media_segundos))
-            self.label_intervalo.config(text=f"Intervalo médio: {intervalo_str}")
+            tempos_unicos = sorted(list(set(self.tempos_execucao))) # Obter timestamps únicos e ordenados
+            if len(tempos_unicos) > 1:
+                total_diferenca = datetime.timedelta()
+                for i in range(1, len(tempos_unicos)):
+                    diferenca = tempos_unicos[i] - tempos_unicos[i-1]
+                    total_diferenca += diferenca
+
+                media_segundos = total_diferenca.total_seconds() / (len(tempos_unicos) - 1)
+                intervalo_delta = datetime.timedelta(seconds=media_segundos)
+                intervalo_str = str(intervalo_delta).split('.')[0]
+                self.label_intervalo.config(text=f"Intervalo médio: {intervalo_str}")
+            else:
+                self.label_intervalo.config(text="Intervalo médio: Não há dados suficientes para calcular (timestamps únicos).")
         else:
             self.label_intervalo.config(text="Intervalo médio: Não há dados suficientes para calcular.")
+            
+            
+    # def salvar_log(self):
+    #     chave = self.chave.get()
+    #     if not chave:
+    #         chave = "monitoramento_sem_chave"
+    #     nome_pasta = chave.replace(" ", "_")
+    #     pasta_monitoramento = "Monitoramento"
+    #     pasta_chave = os.path.join(pasta_monitoramento, nome_pasta)
 
+    #     os.makedirs(pasta_chave, exist_ok=True)
+    #     nome_arquivo_log = os.path.join(pasta_chave, "log.txt")
+
+    #     try:
+    #         with open(nome_arquivo_log, "w") as f:
+    #             f.write(f"Relatório de Monitoramento - Chave: '{chave}' - Versão: '{self.versao.get()}'\n\n")
+    #             f.write("Data Início\t\tIdentificador\tVersão\t\tCaptura\t\t\t\t\t\tData Fim\n")
+    #             f.write("-" * 100 + "\n")
+    #             for item in self.dados:
+    #                 f.write(f"{item[0]}\t{item[1]}\t\t{item[2]}\t\t{item[3]}\t\t{item[4]}\n")
+    #             f.write("\nIntervalo Médio entre Execuções: " + self.label_intervalo.cget("text").replace("Intervalo médio: ", ""))
+    #         messagebox.showinfo("Sucesso", f"Log salvo em: {nome_arquivo_log}")
+    #     except Exception as e:
+    #         messagebox.showerror("Erro ao Salvar Log", f"Ocorreu um erro ao salvar o log: {e}")
+    
+    
     def salvar_log(self):
+        caminho_app = self.caminho_app.get()
         chave = self.chave.get()
-        if not chave:
-            chave = "monitoramento_sem_chave"
-        nome_pasta = chave.replace(" ", "_")
-        pasta_monitoramento = "Monitoramento"
-        pasta_chave = os.path.join(pasta_monitoramento, nome_pasta)
 
-        os.makedirs(pasta_chave, exist_ok=True)
-        nome_arquivo_log = os.path.join(pasta_chave, "log.txt")
+        if not caminho_app:
+            messagebox.showerror("Erro", "Caminho do aplicativo não definido para salvar o log.")
+            return
+
+        nome_aplicativo = os.path.splitext(os.path.basename(caminho_app))[0]
+        nome_pasta = nome_aplicativo.replace(" ", "_")
+        nome_arquivo_log = chave.replace(" ", "_") + ".log"
+        pasta_aplicativo = "Monitoramento"
+        pasta_final = os.path.join(pasta_aplicativo, nome_pasta)
+        caminho_arquivo_log = os.path.join(pasta_final, nome_arquivo_log)
+
+        os.makedirs(pasta_final, exist_ok=True)
 
         try:
-            with open(nome_arquivo_log, "w") as f:
-                f.write(f"Relatório de Monitoramento - Chave: '{chave}' - Versão: '{self.versao.get()}'\n\n")
-                f.write("Data Início\t\tIdentificador\tVersão\t\tCaptura\t\t\t\t\t\tData Fim\n")
-                f.write("-" * 100 + "\n")
+            with open(caminho_arquivo_log, "w") as f:
+                f.write("Data Início,Identificador,Versão do aplicativo,Captura,Data Fim\n")
                 for item in self.dados:
-                    f.write(f"{item[0]}\t{item[1]}\t\t{item[2]}\t\t{item[3]}\t\t{item[4]}\n")
-                f.write("\nIntervalo Médio entre Execuções: " + self.label_intervalo.cget("text").replace("Intervalo médio: ", ""))
-            messagebox.showinfo("Sucesso", f"Log salvo em: {nome_arquivo_log}")
+                    f.write(",".join(map(str, item)) + "\n")
+            messagebox.showinfo("Log Salvo", f"Log salvo em: {caminho_arquivo_log}")
         except Exception as e:
             messagebox.showerror("Erro ao Salvar Log", f"Ocorreu um erro ao salvar o log: {e}")
 
