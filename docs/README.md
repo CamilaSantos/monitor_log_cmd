@@ -33,7 +33,7 @@ Passos para instalar o projeto e suas dependências.
 
 1.  Clone o repositório:
     ```bash
-    git clone [https://github.com/CamilaSantos/monitor_log_cmd.git](https://github.com/CamilaSantos/monitor_log_cmd.git)
+    git clone https://github.com/CamilaSantos/monitor_log_cmd.git
     cd monitor_log_cmd
     ```
 
