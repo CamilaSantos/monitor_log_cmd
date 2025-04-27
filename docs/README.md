@@ -34,7 +34,7 @@ Passos para instalar o projeto e suas dependências.
 1.  Clone o repositório:
     ```bash
     git clone [https://github.com/CamilaSantos/monitor_log_cmd.git](https://github.com/CamilaSantos/monitor_log_cmd.git)
-    cd seu-repositorio
+    cd monitor_log_cmd
     ```
 
 2.  Crie e ative um ambiente virtual (recomendado):
