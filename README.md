@@ -7,6 +7,10 @@
 
 > Aplicativo criado para captura de dados de log em tempo real executado através do prompt de comando
 
+
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
+[![Contributing](https://img.shields.io/badge/Contributing-Yes-brightgreen.svg)](CONTRIBUTING.md)
+
 ## Visão Geral do projeto
 
 A criação deste aplicativo surgiu na necessidade de monitorar uma determindata tarefa de um serviço e validar se está sendo executado dentro do tempo programado. O serviço pode ser executado via prompt de comando e ser visualizada todas as tarefas que estão sendo realizadas. Com o aplicativo é possível capturar palavra ou frase de até 80 caracteres e obter a linha em que esta CHAVE (palavra ou frase) aparece. 
@@ -93,6 +97,14 @@ Tela 2: Executa prompt de comando, visualização do executável informado
 
 **Observação:** A primeira vez que você executa o aplicativo gerado pelo PyInstaller, ele pode levar um pouco mais de tempo para iniciar, pois precisa extrair os arquivos necessários para uma pasta temporária. As execuções subsequentes geralmente são mais rápidas.
 
+
+## Contribuição
+
+Quer contribuir? Dê uma olhada no nosso [Guia de Contribuição](CONTRIBUTING.md) para começar!
+
+## Código de Conduta
+
+Nosso compromisso com um ambiente aberto e acolhedor é detalhado no nosso [Código de Conduta](CODE_OF_CONDUCT.md).
 
 ## Autores
 
