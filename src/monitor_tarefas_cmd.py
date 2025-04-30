@@ -23,6 +23,7 @@ class MonitorApp:
         self.monitorando = False
         self.processo = None
         self.tempos_execucao = []
+        self.hora_inicio_monitoramento = None
         
 
         # Campos de entrada
@@ -40,7 +41,7 @@ class MonitorApp:
         self.botao_iniciar = tk.Button(self.root, text="Iniciar Monitoramento", command=self.iniciar_monitoramento)
 
         # Tabela (Treeview)
-        self.colunas = ("Data Início", "Identificador", "Versão do aplicativo", "Captura", "Data Fim")
+        self.colunas = ("Início Processamento", "Chave", "Versão do aplicativo", "Captura", "Fim Processamento")
         self.tabela = ttk.Treeview(self.root, columns=self.colunas, show="headings")
         for col in self.colunas:
             self.tabela.heading(col, text=col)
@@ -126,6 +127,8 @@ class MonitorApp:
             messagebox.showerror("Erro", "Por favor, preencha o caminho do aplicativo e a palavra-chave.")
             return
 
+        self.hora_inicio_monitoramento = datetime.datetime.now()
+
         self.monitorando = True
         self.entry_caminho.config(state=tk.DISABLED)
         self.entry_chave.config(state=tk.DISABLED)
@@ -138,6 +141,7 @@ class MonitorApp:
         self.atualizar_tabela()
         self.label_intervalo.config(text="Intervalo médio: Monitorando...")
 
+        
         def monitorar():
             caminho_app = self.caminho_app.get()
             chave = self.chave.get()
@@ -156,6 +160,7 @@ class MonitorApp:
                 hora_inicio = None
                 captura_linha = ""
                 tipo_log_inicio = ""
+                timestamp_chave = None # Adicionado para armazenar o timestamp da chave
 
                 for linha in self.processo.stdout:
                     if not self.monitorando:
@@ -165,21 +170,33 @@ class MonitorApp:
                     print(f"Saída do executável ({versao}): {linha}")
 
                     if chave in linha:
-                        if inicio_tarefa is None:
-                            inicio_tarefa = True
-                            match_inicio = re.search(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+([A-Z]+)\s*\]", linha)
-                            if match_inicio:
-                                hora_inicio_str = match_inicio.group(1)
-                                tipo_log_inicio = match_inicio.group(2)
-                                try:
-                                    hora_inicio = datetime.datetime.strptime(hora_inicio_str, "%Y-%m-%d %H:%M:%S")
-                                except ValueError:
+                        match_inicio = re.search(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+([A-Z]+)\s*\]", linha)
+                        timestamp_chave_temp = None
+                        if match_inicio:
+                            hora_inicio_str = match_inicio.group(1)
+                            try:
+                                timestamp_chave_temp = datetime.datetime.strptime(hora_inicio_str, "%Y-%m-%d %H:%M:%S")
+                            except ValueError:
+                                timestamp_chave_temp = datetime.datetime.now()
+                        else:
+                            timestamp_chave_temp = datetime.datetime.now()
+
+                        if timestamp_chave_temp:
+                            timestamp_chave = timestamp_chave_temp # Armazena o timestamp da ocorrência da chave
+                            if inicio_tarefa is None: # Mantém a lógica de detecção de início
+                                inicio_tarefa = True
+                                if match_inicio:
+                                    hora_inicio_str = match_inicio.group(1)
+                                    tipo_log_inicio = match_inicio.group(2)
+                                    try:
+                                        hora_inicio = datetime.datetime.strptime(hora_inicio_str, "%Y-%m-%d %H:%M:%S")
+                                    except ValueError:
+                                        hora_inicio = datetime.datetime.now()
+                                else:
                                     hora_inicio = datetime.datetime.now()
-                            else:
-                                hora_inicio = datetime.datetime.now()
-                                tipo_log_inicio = "INF" # Valor padrão caso não encontre o padrão
-                            captura_linha = linha
-                    
+                                    tipo_log_inicio = "INF" # Valor padrão caso não encontre o padrão
+                                captura_linha = linha
+
                     if re.search(r"<s:[^>]+>", linha) and inicio_tarefa:
                         match_fim = re.search(r"\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+[A-Z]+\s*\]", linha)
                         hora_fim = None
@@ -194,17 +211,14 @@ class MonitorApp:
 
                         if hora_inicio and hora_fim:
                             self.dados.append([hora_inicio.strftime("%Y-%m-%d %H:%M:%S"), chave, versao, captura_linha, hora_fim.strftime("%Y-%m-%d %H:%M:%S")])
-                            if self.tempos_execucao:
-                                diff = hora_fim - self.tempos_execucao[-1][1]
-                                self.tempos_execucao.append((hora_inicio, hora_fim, diff.total_seconds()))
-                            else:
-                                self.tempos_execucao.append((hora_inicio, hora_fim, 0)) # Primeiro registro
-
-                            self.root.after(0, self.atualizar_tabela) # Atualizar a tabela na thread principal
-                        inicio_tarefa = None
-                        hora_inicio = None
-                        captura_linha = ""
-                        tipo_log_inicio = ""
+                            if timestamp_chave: # Adiciona o timestamp da chave para o cálculo do intervalo
+                                self.tempos_execucao.append(timestamp_chave)
+                            self.root.after(0, self.atualizar_tabela)
+                            inicio_tarefa = None
+                            hora_inicio = None
+                            captura_linha = ""
+                            tipo_log_inicio = ""
+                            timestamp_chave = None
 
                     if not self.monitorando:
                         break
@@ -225,7 +239,7 @@ class MonitorApp:
             finally:
                 if self.monitorando: # Garante que a finalização interna só seja chamada se o monitoramento foi iniciado
                     self.root.after(0, self.finalizar_monitoramento_interno)
-
+       
         threading.Thread(target=monitorar, daemon=True).start()
 
     def finalizar_monitoramento(self):
@@ -293,47 +307,31 @@ class MonitorApp:
 
     def calcular_intervalo_medio(self):
         if len(self.tempos_execucao) > 1:
-            tempos_unicos = sorted(list(set(self.tempos_execucao))) # Obter timestamps únicos e ordenados
-            if len(tempos_unicos) > 1:
-                total_diferenca = datetime.timedelta()
-                for i in range(1, len(tempos_unicos)):
-                    diferenca = tempos_unicos[i] - tempos_unicos[i-1]
-                    total_diferenca += diferenca
+            tempos_minutos_unicos = sorted(list(set([(t.hour, t.minute) for t in self.tempos_execucao])))
+            if len(tempos_minutos_unicos) > 1:
+                total_intervalo_minutos = 0
+                num_intervalos = 0
+                for i in range(1, len(tempos_minutos_unicos)):
+                    hora_anterior, minuto_anterior = tempos_minutos_unicos[i-1]
+                    hora_atual, minuto_atual = tempos_minutos_unicos[i]
 
-                media_segundos = total_diferenca.total_seconds() / (len(tempos_unicos) - 1)
-                intervalo_delta = datetime.timedelta(seconds=media_segundos)
-                intervalo_str = str(intervalo_delta).split('.')[0]
-                self.label_intervalo.config(text=f"Intervalo médio: {intervalo_str}")
+                    # Calcula a diferença em minutos
+                    diferenca_minutos = (hora_atual - hora_anterior) * 60 + (minuto_atual - minuto_anterior)
+                    total_intervalo_minutos += diferenca_minutos
+                    num_intervalos += 1
+
+                if num_intervalos > 0:
+                    media_intervalo_minutos = total_intervalo_minutos / num_intervalos
+                    intervalo_delta = datetime.timedelta(minutes=media_intervalo_minutos)
+                    intervalo_str = str(intervalo_delta).split('.')[0] # Formata como HH:MM:SS
+                    self.label_intervalo.config(text=f"Intervalo médio: {intervalo_str}")
+                else:
+                    self.label_intervalo.config(text="Intervalo médio: Não há intervalos suficientes para calcular.")
             else:
-                self.label_intervalo.config(text="Intervalo médio: Não há dados suficientes para calcular (timestamps únicos).")
+                self.label_intervalo.config(text="Intervalo médio: Não há dados suficientes para calcular (minutos únicos).")
         else:
             self.label_intervalo.config(text="Intervalo médio: Não há dados suficientes para calcular.")
-            
-            
-    # def salvar_log(self):
-    #     chave = self.chave.get()
-    #     if not chave:
-    #         chave = "monitoramento_sem_chave"
-    #     nome_pasta = chave.replace(" ", "_")
-    #     pasta_monitoramento = "Monitoramento"
-    #     pasta_chave = os.path.join(pasta_monitoramento, nome_pasta)
 
-    #     os.makedirs(pasta_chave, exist_ok=True)
-    #     nome_arquivo_log = os.path.join(pasta_chave, "log.txt")
-
-    #     try:
-    #         with open(nome_arquivo_log, "w") as f:
-    #             f.write(f"Relatório de Monitoramento - Chave: '{chave}' - Versão: '{self.versao.get()}'\n\n")
-    #             f.write("Data Início\t\tIdentificador\tVersão\t\tCaptura\t\t\t\t\t\tData Fim\n")
-    #             f.write("-" * 100 + "\n")
-    #             for item in self.dados:
-    #                 f.write(f"{item[0]}\t{item[1]}\t\t{item[2]}\t\t{item[3]}\t\t{item[4]}\n")
-    #             f.write("\nIntervalo Médio entre Execuções: " + self.label_intervalo.cget("text").replace("Intervalo médio: ", ""))
-    #         messagebox.showinfo("Sucesso", f"Log salvo em: {nome_arquivo_log}")
-    #     except Exception as e:
-    #         messagebox.showerror("Erro ao Salvar Log", f"Ocorreu um erro ao salvar o log: {e}")
-    
-    
     def salvar_log(self):
         caminho_app = self.caminho_app.get()
         chave = self.chave.get()
@@ -343,20 +341,37 @@ class MonitorApp:
             return
 
         nome_aplicativo = os.path.splitext(os.path.basename(caminho_app))[0]
-        nome_pasta = nome_aplicativo.replace(" ", "_")
-        nome_arquivo_log = chave.replace(" ", "_") + ".log"
-        pasta_aplicativo = "Monitoramento"
-        pasta_final = os.path.join(pasta_aplicativo, nome_pasta)
-        caminho_arquivo_log = os.path.join(pasta_final, nome_arquivo_log)
-
+        nome_pasta_app = nome_aplicativo.replace(" ", "_")
+        pasta_monitoramento = "Monitoramento"
+        pasta_final = os.path.join(pasta_monitoramento, nome_pasta_app)
         os.makedirs(pasta_final, exist_ok=True)
+
+        # Captura a data e hora atual para o nome do arquivo
+        now = datetime.datetime.now()
+        timestamp_str = now.strftime("%Y%m%d%H%M%S")
+        nome_arquivo_log = f"{chave.replace(' ', '_')}_{timestamp_str}.log"
+        caminho_arquivo_log = os.path.join(pasta_final, nome_arquivo_log)
+        
+        
+        hora_inicio_formatada = ""
+        if self.hora_inicio_monitoramento:
+            hora_inicio_formatada = self.hora_inicio_monitoramento.strftime("%Y-%m-%d %H:%M:%S")
+
+        hora_fim_formatada = now.strftime("%Y-%m-%d %H:%M:%S")
+
 
         try:
             with open(caminho_arquivo_log, "w") as f:
-                f.write("Data Início,Identificador,Versão do aplicativo,Captura,Data Fim\n")
+                f.write(f"Início do Monitoramento: {hora_inicio_formatada}\n")
+                
+                f.write(f"Relatório de Monitoramento - Chave: '{chave}' - Versão: '{self.versao.get()}'\n\n")
+                f.write("Início Processamento\t\tIdentificador\tVersão\t\tCaptura\t\t\t\t\t\tFim Processamento\n")
+                f.write("-" * 100 + "\n")
                 for item in self.dados:
-                    f.write(",".join(map(str, item)) + "\n")
-            messagebox.showinfo("Log Salvo", f"Log salvo em: {caminho_arquivo_log}")
+                    f.write(f"{item[0]}\t{item[1]}\t\t{item[2]}\t\t{item[3]}\t\t{item[4]}\n")
+                f.write("\nIntervalo Médio entre Execuções: " + self.label_intervalo.cget("text").replace("Intervalo médio: ", ""))
+                f.write(f"Fim do Monitoramento: {hora_fim_formatada}\n")
+                messagebox.showinfo("Sucesso", f"Log salvo em: {caminho_arquivo_log}")
         except Exception as e:
             messagebox.showerror("Erro ao Salvar Log", f"Ocorreu um erro ao salvar o log: {e}")
 
