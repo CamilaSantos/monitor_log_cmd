@@ -370,7 +370,7 @@ class MonitorApp:
                 for item in self.dados:
                     f.write(f"{item[0]}\t{item[1]}\t\t{item[2]}\t\t{item[3]}\t\t{item[4]}\n")
                 f.write("\nIntervalo Médio entre Execuções: " + self.label_intervalo.cget("text").replace("Intervalo médio: ", ""))
-                f.write(f"Fim do Monitoramento: {hora_fim_formatada}\n")
+                f.write(f"Fim do Monitoramento: {hora_fim_formatada}    \n")
                 messagebox.showinfo("Sucesso", f"Log salvo em: {caminho_arquivo_log}")
         except Exception as e:
             messagebox.showerror("Erro ao Salvar Log", f"Ocorreu um erro ao salvar o log: {e}")
