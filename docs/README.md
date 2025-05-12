@@ -1,23 +1,37 @@
-# Monitor de log de Prompt de Comando
+# Monitor de Atividade em Tempo Real (CMD)
+
+
+> Uma ferramenta Python para monitorar a saída do Prompt de Comando (CMD) de aplicações e serviços. Ao rastrear palavras ou frases específicas, o script captura o início e o fim de tarefas, registrando horários e calculando a frequência de execução. Ideal para monitorar a pontualidade de tarefas agendadas e identificar erros em tempo real.
 
 [![Licença](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status do Projeto](https://img.shields.io/badge/Status-Concluído-brightgreen.svg)](#status-do-projeto)
 [![Linguagem](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![Requisitos](https://img.shields.io/badge/Dependências-Atualizadas-brightgreen.svg)](#requirements.txt)
-
-> Aplicativo criado para captura de dados de log em tempo real executado através do prompt de comando
-
-
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)]([CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md))
 [![Contributing](https://img.shields.io/badge/Contributing-Yes-brightgreen.svg)]([CONTRIBUTING.md](CONTRIBUTING.md))
 
-## Visão Geral do projeto
 
-A criação deste aplicativo surgiu na necessidade de monitorar uma determindata tarefa de um serviço e validar se está sendo executado dentro do tempo programado. O serviço pode ser executado via prompt de comando e ser visualizada todas as tarefas que estão sendo realizadas. Com o aplicativo é possível capturar palavra ou frase de até 80 caracteres e obter a linha em que esta CHAVE (palavra ou frase) aparece. 
+**Visão Geral do Projeto**
 
-As linha em que contém esta CHAVE são mostradas no aplicativo com data e hora de finalização. Ao clicar em Finalizar Monitoramento e informado o calculo de tempo médio em que esta tarefa estava sendo executada e salvo um log.txt para analise futura ou utilizado como evidência.
+Este script Python foi criado para monitorar a saída de tarefas executadas via Prompt de Comando (CMD), com o objetivo de validar se ocorrem dentro do tempo esperado. Ele permite rastrear uma palavra ou frase chave (de até 80 caracteres) na saída do CMD, exibindo as linhas onde essa chave aparece com a respectiva data e hora. Ao finalizar o monitoramento, o script calcula e apresenta o tempo médio de execução da tarefa, além de salvar um log completo em um arquivo `log.txt` para análise futura ou como evidência.
 
+**Casos de Uso**
 
+* **Monitoramento da Pontualidade de Tarefas Agendadas:**
+    * Cenário: Backup agendado via CMD (ex: 2h00).
+    * Como o script ajuda: Monitora "Backup Iniciado" e "Backup Concluído" para verificar horário e duração, identificando atrasos.
+
+* **Análise de Desempenho de Rotinas de Integração:**
+    * Cenário: Integração de dados via CMD.
+    * Como o script ajuda: Rastreia palavras-chave de início/fim de etapas para medir duração e identificar gargalos.
+
+* **Detecção e Diagnóstico de Erros em Tempo Real:**
+    * Cenário: Logs de erro de aplicação web no CMD.
+    * Como o script ajuda: Monitora palavras/frases de erro, registrando ocorrências para análise (arquivo `log.txt`).
+
+* **Acompanhamento de Processos Batch de Longa Duração:**
+    * Cenário: Processo batch longo com progresso no CMD.
+    * Como o script ajuda: Monitora início/fim de sub-tarefas para acompanhar o andamento e identificar lentidões.
 
 ### Pré-requisitos
 
@@ -26,6 +40,7 @@ Liste aqui as dependências que precisam ser instaladas antes de executar o proj
 * [Python](https://www.python.org/downloads/) (versão 3.11 ou superior)
 * [pip](https://pip.pypa.io/en/stable/installing/) (geralmente instalado com o Python)
 * [Git](https://git-scm.com/downloads) (para clonar o repositório)
+
 
 ### Instalação
 
