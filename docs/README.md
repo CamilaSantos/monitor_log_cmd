@@ -3,8 +3,8 @@
 
 > Uma ferramenta Python para monitorar a saída do Prompt de Comando (CMD) de aplicações e serviços. Ao rastrear palavras ou frases específicas, o script captura o início e o fim de tarefas, registrando horários e calculando a frequência de execução. Ideal para monitorar a pontualidade de tarefas agendadas e identificar erros em tempo real.
 
-[![Licença](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Status do Projeto](https://img.shields.io/badge/Status-Concluído-brightgreen.svg)](#status-do-projeto)
+[![Licença](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Status do Projeto](https://img.shields.io/badge/Status-Em_Andamento-yellow.svg)](#status-do-projeto)
 [![Linguagem](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
 [![Requisitos](https://img.shields.io/badge/Dependências-Atualizadas-brightgreen.svg)](#requirements.txt)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)]([CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md))
